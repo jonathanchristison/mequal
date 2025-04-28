@@ -1,0 +1,91 @@
+{
+    "ID": "prodsec",
+    "title": "Mequal Policies for Product Security",
+    "description": "Metadata Policy object for the written definitions of Mequal policies related to Product Security",
+    "source": "https://github.com/project-ncl/mequal-prodsec-policies",
+    "schemaVersion": "1.0",
+    "endpoints": [
+        {
+            "query": "prodsec=data.prodsec.summary",
+            "description": "Endpoint that returns a summary of evaluation messages. Number of messages per rule violation shown."
+        },
+        {
+            "query": "prodsec=data.prodsec.violations",
+            "description": "Endpoint that returns the whole set of evaluation messages in detail."
+        },
+        {
+            "query": "prodsec_metadata=data.prodsec.metadata",
+            "description": "Endpoint that returns the metadata of the policies that are evaluated against the manifest."
+        },
+        {
+            "query": "prodsec_quality_level=data.prodsec.quality_level",
+            "description": "Endpoint that returns feedback of the quality level of the manifest."
+        }
+    ],
+    "policies": [
+        {
+            "policyID": "ANCESTORS_OVER_COMMITS",
+            "title": "Ancestors over Commits for Upstream Sources",
+            "description": "In a CycloneDX manifest, use the .pedigree.ancestors field to define the sources instead of pedigree.commit",
+            "reasoning": "The pedigree.commit field does not get parsed into a package by Trustify (TPAv2) so we cannot extract it easily.",
+            "comment": "Based on SBOMER-336",
+            "stakeholders": [
+                {
+                    "type": "team",
+                    "name": "Product Security"
+                }
+            ],
+            "qualityLevel": "L1",
+            "severity": "High",
+            "scenarios": [
+                {
+                    "scenarioID": "TPA_V2_INGEST",
+                    "description": "Related to the ingestion of a manifest into TPA V2 (Trustify)",
+                    "questions": [
+                        {
+                            "questionID": "",
+                            "description": ""
+                        }
+                    ]
+                }
+            ],
+            "encoding": {
+                "pedigree": {
+                    "ancestors": [
+                        {
+                            "bom-ref": "pkg:generic/example@1.0.0?download_url=https://example.com",
+                            "type": "example",
+                            "name": "example",
+                            "version": "1.0.0",
+                            "purl": "pkg:generic/example@1.0.0?download_url=https://example.com"
+                        }
+                    ]
+                }
+            },
+            "encodings": [
+                {
+                    "ID": "sources_in_pedigree_ancestors",
+                    "title": "Sources Defined as Ancestors",
+                    "description": "In a CycloneDX manifest, upstream sources should be defined using pedigree.ancestors",
+                    "questions":[ "" ],
+                    "informationRequirements":[ "" ],
+                    "conditions": [
+                        {
+                            "name": "is_cyclonedx",
+                            "description": "SBOM is CycloneDX"
+                        },
+                        {
+                            "name": "cdx_contains_pedigree_commit",
+                            "description": "SBOM contains components that use pedigree.commit"
+                        }
+                    ],
+                    "violation_feedback": {
+                        "feedbackType": "GUIDE",
+                        "feedbackMessage": "TIP == If using pedigree.commit field to define upstream sources, use the .pedigree.ancestors instead. Represent this information according to the encoding. The pedigree.commit field does not get parsed into a package by Trustify (TPAv2) so we cannot extract it easily.",
+                        "feedbackParameters": []
+                    }
+                }
+            ]
+        }
+    ]
+}
