@@ -1,0 +1,49 @@
+#This metadata aims to add context to policy rules, it is intended to be the output 
+# of webforms or cli tools 
+scenario_id: 77fa5ab8-566b-4132-bf9a-fb648ffb1f01 #uuid_gen
+name: Supply Chain Attack #Friendly name for scenario
+owners:
+- Product Security #The owning team 
+authors:
+#Authors of the scenario (our SMEs)
+- name: "John Doe"
+  email: "john.doe@example.com"
+  timestamp: "2025-04-28T14:00:00Z"
+  signature:
+  public_key_id: "ABC123DEF456"
+  algorithm: "RSA-SHA256"
+  signature_value: |
+    -----BEGIN SIGNATURE-----
+    MIIC2DCCAcCgAwIBAgIBADANBgkqhkiG9w0BAQsFADA...
+    -----END SIGNATURE-----
+short_description: Suppy chain attack utilising vulnerabilities provided by a back door
+description: |
+  Supply chain attack utilising vulnerabilities provided by a back door, 
+  this type of attack was noteably spotted in XZ compression lib, this type of vulnerability is likely to of taken
+  some time to put into place and likely well obfuscated, it will target libraries that are the most ubiquitus.
+examples:
+- url: https://medium.com/@knownsec404team/analysis-of-the-xz-utils-backdoor-code-d2d5316ac43f
+  description: |
+    An attempted supply chain attack of XZ Utils compression library used in many tools 
+- url: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-3094
+  description: CVE for XZ Utils
+- url: https://www.techtarget.com/whatis/feature/SolarWinds-hack-explained-Everything-you-need-to-know
+  desription: Write up of the SolwarWinds attack in 2019
+questions:
+- id: d51312b2 #Adler32 (essentially our foreign key)
+  question: Who has contributed code to the affected component
+  reasoning: Contributors to sources for the affected component may have commited the backdoor, we should be able to isolate contributors
+- id: 5f4e2e7a
+  question: Which projects use this component?
+  reasoning: Which projects use the affected component as a direct dependency
+- id: 6b911521
+  question: Which projects use this component as part of their build?
+  reasoning: If this is a build time component then there could be code alteration or malware injection
+- question: Which projects have had contributions from this commiter
+tags:
+#Freeform fields, in this case we use it to tag relevant CWE and CVEs
+- related_cwe:
+  - CWE-829
+- related_cve:
+  - CVE-2024-3094
+  - CVE-2020-10148
